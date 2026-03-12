@@ -181,7 +181,8 @@ function addGiftBox(boxTypeId) {
         typeId: boxTypeId,
         name: boxDef.name,
         price: boxDef.price,
-        selections: initialSelections
+        selections: initialSelections,
+        quantity: 1
     });
 
     renderGiftBoxes();
@@ -200,6 +201,19 @@ function updateGiftBoxSelection(uniqueId, selectionIndex, optionIndex) {
         box.selections[selectionIndex] = parseInt(optionIndex);
         updateCart();
     }
+}
+
+function updateGiftBoxQty(uniqueId, delta) {
+    const box = giftBoxesCart.find(gb => gb.id === uniqueId);
+    if (!box) return;
+
+    let newQty = box.quantity + delta;
+    if (newQty < 1) newQty = 1; // Minimum 1 for gift boxes, remove button handles deletion
+
+    box.quantity = newQty;
+    document.getElementById(`gb_qty_${uniqueId}`).value = newQty;
+
+    updateCart();
 }
 
 function renderGiftBoxes() {
@@ -243,7 +257,14 @@ function renderGiftBoxes() {
                     <span class="gift-box-title">組合 ${index + 1}: ${box.name}</span>
                     <span style="display:block; font-size: 0.9rem; color: var(--text-muted); margin-top:2px;">單價: ${box.price} NTD</span>
                 </div>
-                <button class="remove-box-btn" onclick="removeGiftBox('${box.id}')">移除此禮盒</button>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div class="qty-control" style="width: auto; border: 1px solid var(--border-color); border-radius: 6px; padding: 2px;">
+                        <button class="qty-btn" style="width: 28px; height: 28px;" onclick="updateGiftBoxQty('${box.id}', -1)">-</button>
+                        <input type="text" class="qty-input" style="width: 40px;" id="gb_qty_${box.id}" value="${box.quantity}" readonly>
+                        <button class="qty-btn" style="width: 28px; height: 28px;" onclick="updateGiftBoxQty('${box.id}', 1)">+</button>
+                    </div>
+                    <button class="remove-box-btn" onclick="removeGiftBox('${box.id}')">移除</button>
+                </div>
             </div>
             <div class="box-options-grid">
                 ${selectionsHTML}
@@ -263,7 +284,7 @@ function updateCart() {
 
     // Calculate Gift Boxes
     giftBoxesCart.forEach(box => {
-        subtotal += box.price;
+        subtotal += box.price * box.quantity;
     });
 
     let shippingFee = 0;
@@ -299,27 +320,30 @@ function generateOrderSummary() {
     // Single Items
     const purchasedItems = singleItemsCart.filter(item => item.quantity > 0);
     if (purchasedItems.length > 0) {
-        orderLines.push("\n【 單品選購 】");
         purchasedItems.forEach(item => {
             const lineTotal = item.price * item.quantity;
             subtotal += lineTotal;
-            orderLines.push(`- ${item.optionName} x${item.quantity} (小計: ${lineTotal} NTD)`);
+            // 格式化為: [單品] 咖啡豆名 x 數目 (小計)
+            orderLines.push(`[單品] ${item.optionName} x ${item.quantity} (小計: ${lineTotal})`);
         });
     }
 
     // Gift Boxes
     if (giftBoxesCart.length > 0) {
-        orderLines.push("\n【 客製化禮盒 】");
-        giftBoxesCart.forEach((box, index) => {
-            subtotal += box.price;
+        giftBoxesCart.forEach((box) => {
+            const lineTotal = box.price * box.quantity;
+            subtotal += lineTotal;
             const boxDef = GIFT_BOXES[box.typeId];
-            orderLines.push(`- 組合 ${index + 1}: ${box.name} (${box.price} NTD)`);
 
-            boxDef.selections.forEach((selItem, sIndex) => {
+            // 擷取選擇的明細組成一行
+            const selDetails = boxDef.selections.map((selItem, sIndex) => {
                 const optIdx = box.selections[sIndex];
                 const optName = PRODUCTS[selItem.type].options[optIdx];
-                orderLines.push(`   > ${selItem.label}: ${optName}`);
-            });
+                return `${selItem.label}: ${optName.split(' ')[1] || optName}`; // 嘗試簡化名稱避免太長
+            }).join('、');
+
+            // 格式化為: [禮盒1] (蜂蜜:A、蜂蜜:B) x 數目 (小計)
+            orderLines.push(`[${box.name.split(':')[0]}] (${selDetails}) x ${box.quantity} (小計: ${lineTotal})`);
         });
     }
 
