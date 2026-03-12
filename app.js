@@ -176,7 +176,8 @@ function addGiftBox(boxTypeId) {
     // Initialize default selections (index 0 of each required list)
     let initialSelections = boxDef.selections.map(sel => 0);
 
-    giftBoxesCart.push({
+    // Add to the beginning of the array so new boxes appear at the top
+    giftBoxesCart.unshift({
         id: uniqueId,
         typeId: boxTypeId,
         name: boxDef.name,
@@ -342,9 +343,24 @@ function updateCart() {
         // Add gift boxes to float cart list
         giftBoxesCart.forEach(box => {
             totalItems += box.quantity;
+            const boxDef = GIFT_BOXES[box.typeId];
+
+            // 擷取選擇的明細組成提示文字
+            const selDetails = boxDef.selections.map((selItem, sIndex) => {
+                const optIdx = box.selections[sIndex];
+                const optName = PRODUCTS[selItem.type].options[optIdx];
+                return `${optName.split(' ')[1] || optName}`;
+            }).join(' + ');
+
             const li = document.createElement('li');
             const displayName = box.name.replace(':', '') + '組合';
-            li.innerHTML = `<span class="item-name">${displayName}</span><span class="item-qty-price">x${box.quantity}</span>`;
+            li.innerHTML = `
+                <div class="item-name" style="display:flex; flex-direction:column; padding-right:10px;">
+                    <span style="font-weight:600; color:var(--primary-color);">${displayName}</span>
+                    <span style="font-size:0.75rem; color:var(--text-muted); margin-top:2px; line-height:1.3;">(${selDetails})</span>
+                </div>
+                <span class="item-qty-price">x${box.quantity}</span>
+            `;
             listContainer.appendChild(li);
         });
 
