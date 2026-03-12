@@ -302,12 +302,74 @@ function updateCart() {
         shippingFee = 0;
         shippingRow.style.display = 'flex';
         shippingRow.innerHTML = `<span>運費:</span><span id="shipping-fee" style="color: #2e7d32; font-weight: 600;">已達免運門檻 (0 NTD)</span>`;
+        if (document.getElementById('float-shipping-row')) {
+            document.getElementById('float-shipping-row').innerHTML = `<span>運費:</span><span id="float-shipping-fee" style="color: #2e7d32; font-weight: 600;">0 NTD</span>`;
+        }
     }
 
     const total = subtotal + shippingFee;
 
     document.getElementById('subtotal-price').innerText = `${subtotal} NTD`;
     document.getElementById('total-price').innerText = `${total} NTD`;
+
+    // Update Floating Cart
+    if (document.getElementById('float-subtotal')) {
+        document.getElementById('float-subtotal').innerText = `${subtotal} NTD`;
+
+        if (subtotal > 0 && subtotal < 1000) {
+            document.getElementById('float-shipping-row').innerHTML = `<span>運費:</span><span id="float-shipping-fee">65 NTD</span>`;
+            document.getElementById('float-shipping-row').style.display = 'flex';
+        } else if (subtotal === 0) {
+            document.getElementById('float-shipping-row').style.display = 'none';
+        }
+
+        document.getElementById('float-total-price').innerText = `${total} NTD`;
+
+        // Update Itemized List
+        const listContainer = document.getElementById('float-item-list');
+        listContainer.innerHTML = '';
+
+        let totalItems = 0;
+
+        // Add single items to float cart list
+        singleItemsCart.filter(i => i.quantity > 0).forEach(item => {
+            totalItems += item.quantity;
+            const li = document.createElement('li');
+            li.innerHTML = `<span class="item-name">${item.optionName}</span><span class="item-qty-price">x${item.quantity}</span>`;
+            listContainer.appendChild(li);
+        });
+
+        // Add gift boxes to float cart list
+        giftBoxesCart.forEach(box => {
+            totalItems += box.quantity;
+            const li = document.createElement('li');
+            const displayName = box.name.replace(':', '') + '組合';
+            li.innerHTML = `<span class="item-name">${displayName}</span><span class="item-qty-price">x${box.quantity}</span>`;
+            listContainer.appendChild(li);
+        });
+
+        const badge = document.getElementById('floating-badge');
+        badge.innerText = totalItems;
+
+        // Hide badge if empty
+        if (totalItems === 0) {
+            badge.style.display = 'none';
+        } else {
+            badge.style.display = 'flex';
+        }
+    }
+}
+
+// Floating Cart Logic
+function toggleFloatingCart() {
+    const cart = document.getElementById('floating-cart');
+    cart.classList.toggle('collapsed');
+}
+
+function scrollToCheckout() {
+    toggleFloatingCart(); // Close the floating cart
+    const checkoutSection = document.querySelector('.cart-section');
+    checkoutSection.scrollIntoView({ behavior: 'smooth' });
 }
 
 function generateOrderSummary() {

@@ -87,6 +87,38 @@
             </div>
         </section>
 
+        <!-- Floating Cart Widget -->
+        <div id="floating-cart" class="floating-cart collapsed">
+            <div class="floating-cart-toggle" onclick="toggleFloatingCart()">
+                <span class="cart-icon">🛒</span>
+                <span id="floating-badge" class="cart-badge">0</span>
+            </div>
+            <div class="floating-cart-content">
+                <div class="floating-cart-header">
+                    <h3>您的購物車</h3>
+                    <button class="close-cart-btn" onclick="toggleFloatingCart()">✕</button>
+                </div>
+                <div class="floating-cart-body">
+                    <ul id="float-item-list" class="float-item-list"></ul>
+                    <div class="price-row">
+                        <span>商品總額:</span>
+                        <span id="float-subtotal">0 NTD</span>
+                    </div>
+                    <div class="price-row shipping-row" id="float-shipping-row">
+                        <span>運費:</span>
+                        <span id="float-shipping-fee">65 NTD</span>
+                    </div>
+                    <div class="price-row total-row">
+                        <span>總計:</span>
+                        <span id="float-total-price" class="highlight-total">0 NTD</span>
+                    </div>
+                </div>
+                <div class="floating-cart-footer">
+                    <button onclick="scrollToCheckout()" class="btn btn-accent btn-large">前往結帳</button>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <!-- Modal / Toast for Notification -->
