@@ -463,15 +463,17 @@ body {
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(3px);
     -webkit-backdrop-filter: blur(3px);
-    z-index: 9998;
+    z-index: 10000;
     opacity: 0;
     visibility: hidden;
+    pointer-events: none;
     transition: all 0.3s ease;
 }
 
 .modal-backdrop.active {
     opacity: 1;
     visibility: visible;
+    pointer-events: auto;
 }
 
 /* Product Hover Card */
@@ -838,6 +840,7 @@ body {
         top: 50% !important;
         left: 50% !important;
         bottom: auto !important;
+        z-index: 10001;
         transform: translate(-50%, -50%) scale(0.9) !important;
         width: 90vw;
         max-width: 320px;

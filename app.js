@@ -98,30 +98,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Global tap-to-close and scroll-to-close handler for bio cards
 function closeAllDetailCards() {
-    document.querySelectorAll('.hover-card.active').forEach(card => {
+    const activeCards = document.querySelectorAll('.hover-card.active');
+    if (activeCards.length === 0) return; // Optimization
+
+    activeCards.forEach(card => {
         card.classList.remove('active');
     });
     const backdrop = document.getElementById('modal-backdrop');
     if (backdrop) backdrop.classList.remove('active');
 }
 
-// Support pointerdown for faster response and click for compatibility
-document.addEventListener('pointerdown', (e) => {
-    const isInfoIcon = e.target.closest('.info-icon');
-    const isHoverCard = e.target.closest('.hover-card');
-    const isBackdrop = e.target.id === 'modal-backdrop';
+// Click/Touch listener is the most reliable on mobile for "tap to dismiss"
+// We use a broader listener to catch everything
+['click', 'touchstart'].forEach(evt => {
+    document.addEventListener(evt, (e) => {
+        const isInfoIcon = e.target.closest('.info-icon');
+        const isHoverCard = e.target.closest('.hover-card');
+        const isBackdrop = e.target.id === 'modal-backdrop';
 
-    // If we click anywhere that isn't the icon or the card, close all cards
-    if ((!isInfoIcon && !isHoverCard) || isBackdrop) {
-        closeAllDetailCards();
-    }
+        // Check if any card is active first
+        if (document.querySelector('.hover-card.active')) {
+            if ((!isInfoIcon && !isHoverCard) || isBackdrop) {
+                // If we are touching/clicking outside, close it
+                closeAllDetailCards();
+            }
+        }
+    }, { passive: true });
 });
 
 // Extra sensitive scroll/touch detection for dismissal
-window.addEventListener('scroll', closeAllDetailCards, { passive: true });
-window.addEventListener('touchmove', (e) => {
-    // Only close if we are not touching the modal itself
-    if (!e.target.closest('.hover-card')) {
+window.addEventListener('scroll', () => {
+    // Only trigger if a card is actually open to avoid unnecessary DOM calls
+    if (document.querySelector('.hover-card.active')) {
         closeAllDetailCards();
     }
 }, { passive: true });
