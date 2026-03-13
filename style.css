@@ -108,10 +108,17 @@ body {
     margin-bottom: 30px;
     box-shadow: var(--shadow-sm);
     transition: var(--transition);
+    position: relative;
+    z-index: 1;
 }
 
 .section-card:hover {
     box-shadow: var(--shadow-md);
+    z-index: 5;
+}
+
+.section-card:focus-within {
+    z-index: 10;
 }
 
 .section-header {
@@ -169,12 +176,15 @@ body {
     flex-direction: column;
     justify-content: space-between;
     transition: var(--transition);
+    position: relative;
+    z-index: 1;
 }
 
 .product-item:hover {
     transform: translateY(-5px);
     box-shadow: var(--shadow-md);
     border-color: var(--primary-light);
+    z-index: 100;
 }
 
 .product-info h3 {
@@ -321,11 +331,13 @@ body {
     margin-bottom: 20px;
     position: relative;
     transition: var(--transition);
+    z-index: 1;
 }
 
 .gift-box-item:hover {
     border-color: var(--secondary-color);
     box-shadow: var(--shadow-sm);
+    z-index: 100;
 }
 
 .gift-box-header {
@@ -439,6 +451,103 @@ body {
 .toast.show {
     transform: translateX(-50%) translateY(0);
     opacity: 1;
+}
+
+/* Product Hover Card */
+.product-title-with-hover {
+    position: relative;
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 6px;
+    cursor: help;
+    margin: 0;
+}
+
+.info-icon {
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    opacity: 0.6;
+    transition: var(--transition);
+    margin-top: -2px;
+}
+
+.product-title-with-hover:hover .info-icon {
+    opacity: 1;
+}
+
+.hover-card {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    z-index: 9999;
+    width: 280px;
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 15px;
+    font-size: 0.9rem;
+    color: var(--text-color);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    pointer-events: none;
+    line-height: 1.5;
+    font-weight: normal;
+    text-align: left;
+}
+
+/* 如果在底部，讓卡片向上彈跳避開遮擋 */
+.category-grid>.product-item:nth-last-child(-n+2) .hover-card {
+    top: auto;
+    bottom: calc(100% + 10px);
+    transform: translateY(10px);
+}
+
+.category-grid>.product-item:nth-last-child(-n+2) .product-title-with-hover:hover .hover-card {
+    transform: translateY(0);
+}
+
+.category-grid>.product-item:nth-last-child(-n+2) .hover-card::before {
+    top: auto;
+    bottom: -6px;
+    border-left: none;
+    border-top: none;
+    border-right: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+
+.hover-card-img {
+    width: 100%;
+    max-height: 200px;
+    object-fit: contain;
+    border-radius: var(--radius-sm);
+    margin-bottom: 15px;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+
+/* Arrow for the hover card */
+.hover-card::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 20px;
+    width: 12px;
+    height: 12px;
+    background: rgba(255, 255, 255, 0.85);
+    /* approximate card bg */
+    border-left: 1px solid rgba(255, 255, 255, 0.6);
+    border-top: 1px solid rgba(255, 255, 255, 0.6);
+    transform: rotate(45deg);
+}
+
+.product-title-with-hover:hover .hover-card {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
 }
 
 /* Responsive */
