@@ -164,7 +164,9 @@ function initSingleProducts() {
                 <div class="product-info">
                     <h3 class="product-title-with-hover">
                         ${optionName}
-                        <span class="info-icon">🛈</span>
+                        <span class="info-icon">
+                            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                        </span>
                         <div class="hover-card">
                             <img src="assets/${optionName}.png" alt="${optionName}" class="hover-card-img" onerror="this.style.display='none'">
                             <div class="hover-card-text">${optionDesc.replace(/\n/g, '<br>')}</div>
@@ -317,7 +319,9 @@ function renderGiftBoxes() {
                 <div>
                     <span class="gift-box-title product-title-with-hover" style="display:inline-flex;">
                         組合 ${index + 1}: ${box.name}
-                        <span class="info-icon" style="margin-left: 5px;">🛈</span>
+                        <span class="info-icon" style="margin-left: 5px;">
+                            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                        </span>
                         <div class="hover-card">
                             <img src="assets/${boxDef.imageName}.png" alt="${boxDef.imageName}" class="hover-card-img" onerror="this.style.display='none'">
                             <div class="hover-card-text">${boxDef.desc.replace(/\n/g, '<br>')}</div>
