@@ -214,10 +214,10 @@ function initSingleProducts() {
                 document.querySelectorAll('.hover-card.active').forEach(c => c.classList.remove('active'));
 
                 if (!wasActive) {
+                    closeAllDetailCards(); // Close others before opening
                     cardInner.classList.add('active');
-                    document.getElementById('modal-backdrop').classList.add('active');
-                } else {
-                    document.getElementById('modal-backdrop').classList.remove('active');
+                    const backdrop = document.getElementById('modal-backdrop');
+                    if (backdrop) backdrop.classList.add('active');
                 }
             });
 

@@ -517,7 +517,7 @@ body {
     position: absolute;
     top: calc(100% + 10px);
     left: 0;
-    z-index: 9999;
+    z-index: 10001;
     width: 280px;
     background: #fff;
     border: 1px solid var(--border-color);
