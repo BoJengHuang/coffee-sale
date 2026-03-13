@@ -505,8 +505,10 @@ body {
     display: block;
 }
 
-.product-title-with-hover:hover .info-icon {
-    opacity: 1;
+@media (hover: hover) {
+    .product-title-with-hover:hover .info-icon {
+        opacity: 1;
+    }
 }
 
 .hover-card {
@@ -533,10 +535,10 @@ body {
 }
 
 .hover-card.active {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-    pointer-events: auto;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0) !important;
+    pointer-events: auto !important;
 }
 
 /* 如果在底部，讓卡片向上彈跳避開遮擋 */
@@ -546,8 +548,16 @@ body {
     transform: translateY(10px);
 }
 
-.category-grid>.product-item:nth-last-child(-n+2) .product-title-with-hover:hover .hover-card {
-    transform: translateY(0);
+@media (hover: hover) {
+    .product-title-with-hover:hover .hover-card {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .category-grid>.product-item:nth-last-child(-n+2) .product-title-with-hover:hover .hover-card {
+        transform: translateY(0);
+    }
 }
 
 .category-grid>.product-item:nth-last-child(-n+2) .hover-card::before {
@@ -585,11 +595,6 @@ body {
     transform: rotate(45deg);
 }
 
-.product-title-with-hover:hover .hover-card {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
 
 /* Responsive */
 @media (max-width: 600px) {

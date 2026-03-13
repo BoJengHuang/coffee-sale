@@ -101,9 +101,11 @@ function closeAllDetailCards() {
     document.querySelectorAll('.hover-card.active').forEach(card => {
         card.classList.remove('active');
     });
-    document.getElementById('modal-backdrop').classList.remove('active');
+    const backdrop = document.getElementById('modal-backdrop');
+    if (backdrop) backdrop.classList.remove('active');
 }
 
+// Support pointerdown for faster response and click for compatibility
 document.addEventListener('pointerdown', (e) => {
     const isInfoIcon = e.target.closest('.info-icon');
     const isHoverCard = e.target.closest('.hover-card');
@@ -115,9 +117,11 @@ document.addEventListener('pointerdown', (e) => {
     }
 });
 
-// Close cards when the user scrolls (common UX for mobile full-screen-ish modals)
-window.addEventListener('scroll', () => {
-    if (document.querySelector('.hover-card.active')) {
+// Extra sensitive scroll/touch detection for dismissal
+window.addEventListener('scroll', closeAllDetailCards, { passive: true });
+window.addEventListener('touchmove', (e) => {
+    // Only close if we are not touching the modal itself
+    if (!e.target.closest('.hover-card')) {
         closeAllDetailCards();
     }
 }, { passive: true });
