@@ -124,6 +124,16 @@
     <!-- Modal Backdrop -->
     <div id="modal-backdrop" class="modal-backdrop" onclick="closeAllDetailCards()"></div>
 
+    <!-- Global Product Detail Modal -->
+    <div id="product-detail-modal" class="global-modal">
+        <div class="global-modal-content">
+            <button class="modal-close-btn" onclick="closeAllDetailCards()">&times;</button>
+            <div id="modal-body-content">
+                <!-- Content injected via JS -->
+            </div>
+        </div>
+    </div>
+
     <!-- Modal / Toast for Notification -->
     <div id="toast" class="toast hidden">
         <span id="toast-message">已複製訂單明細！</span>

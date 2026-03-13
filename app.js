@@ -98,38 +98,48 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Global tap-to-close and scroll-to-close handler for bio cards
 function closeAllDetailCards() {
-    const activeCards = document.querySelectorAll('.hover-card.active');
-    if (activeCards.length === 0) return; // Optimization
+    const activeModals = document.querySelectorAll('.global-modal.active');
+    if (activeModals.length === 0) return;
 
-    activeCards.forEach(card => {
-        card.classList.remove('active');
+    activeModals.forEach(modal => {
+        modal.classList.remove('active');
     });
     const backdrop = document.getElementById('modal-backdrop');
     if (backdrop) backdrop.classList.remove('active');
 }
 
-// Click/Touch listener is the most reliable on mobile for "tap to dismiss"
-// We use a broader listener to catch everything
-['click', 'touchstart'].forEach(evt => {
-    document.addEventListener(evt, (e) => {
-        const isInfoIcon = e.target.closest('.info-icon');
-        const isHoverCard = e.target.closest('.hover-card');
-        const isBackdrop = e.target.id === 'modal-backdrop';
+function showProductDetail(name, desc, imgName) {
+    const modal = document.getElementById('product-detail-modal');
+    const content = document.getElementById('modal-body-content');
+    const backdrop = document.getElementById('modal-backdrop');
 
-        // Check if any card is active first
-        if (document.querySelector('.hover-card.active')) {
-            if ((!isInfoIcon && !isHoverCard) || isBackdrop) {
-                // If we are touching/clicking outside, close it
-                closeAllDetailCards();
-            }
+    content.innerHTML = `
+        <img src="assets/${imgName}.png" alt="${name}" class="modal-img" onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
+        <div class="modal-title">${name}</div>
+        <div class="modal-desc">${desc.replace(/\n/g, '<br>')}</div>
+    `;
+
+    modal.classList.add('active');
+    if (backdrop) backdrop.classList.add('active');
+}
+
+// Click listener is often more reliable on mobile for "tap to dismiss"
+document.addEventListener('click', (e) => {
+    const isInfoIcon = e.target.closest('.info-icon');
+    const isModalContent = e.target.closest('.global-modal-content');
+    const isBackdrop = e.target.id === 'modal-backdrop';
+
+    // Check if modal is active first
+    if (document.querySelector('.global-modal.active')) {
+        if ((!isInfoIcon && !isModalContent) || isBackdrop) {
+            closeAllDetailCards();
         }
-    }, { passive: true });
+    }
 });
 
-// Extra sensitive scroll/touch detection for dismissal
+// Extra sensitive scroll detection for dismissal
 window.addEventListener('scroll', () => {
-    // Only trigger if a card is actually open to avoid unnecessary DOM calls
-    if (document.querySelector('.hover-card.active')) {
+    if (document.querySelector('.global-modal.active')) {
         closeAllDetailCards();
     }
 }, { passive: true });
@@ -192,10 +202,6 @@ function initSingleProducts() {
                         <span class="info-icon">
                             <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
                         </span>
-                        <div class="hover-card">
-                            <img src="assets/${optionName}.png" alt="${optionName}" class="hover-card-img" onerror="this.style.display='none'">
-                            <div class="hover-card-text">${optionDesc.replace(/\n/g, '<br>')}</div>
-                        </div>
                     </h3>
                     <div class="product-price">${productData.price} NTD</div>
                 </div>
@@ -207,18 +213,7 @@ function initSingleProducts() {
             `;
             card.querySelector('.info-icon').addEventListener('click', (e) => {
                 e.stopPropagation();
-                const cardInner = card.querySelector('.hover-card');
-                const wasActive = cardInner.classList.contains('active');
-
-                // Close others first
-                document.querySelectorAll('.hover-card.active').forEach(c => c.classList.remove('active'));
-
-                if (!wasActive) {
-                    closeAllDetailCards(); // Close others before opening
-                    cardInner.classList.add('active');
-                    const backdrop = document.getElementById('modal-backdrop');
-                    if (backdrop) backdrop.classList.add('active');
-                }
+                showProductDetail(optionName, optionDesc, optionName);
             });
 
             categoryGrid.appendChild(card);
@@ -352,10 +347,6 @@ function renderGiftBoxes() {
                         <span class="info-icon" style="margin-left: 5px;">
                             <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
                         </span>
-                        <div class="hover-card">
-                            <img src="assets/${boxDef.imageName}.png" alt="${boxDef.imageName}" class="hover-card-img" onerror="this.style.display='none'">
-                            <div class="hover-card-text">${boxDef.desc.replace(/\n/g, '<br>')}</div>
-                        </div>
                     </span>
                     <span style="display:block; font-size: 0.9rem; color: var(--text-muted); margin-top:2px;">單價: ${box.price} NTD</span>
                 </div>
@@ -374,16 +365,7 @@ function renderGiftBoxes() {
         `;
         boxEl.querySelector('.info-icon').addEventListener('click', (e) => {
             e.stopPropagation();
-            const cardInner = boxEl.querySelector('.hover-card');
-            const wasActive = cardInner.classList.contains('active');
-
-            // Close others first
-            closeAllDetailCards();
-
-            if (!wasActive) {
-                cardInner.classList.add('active');
-                document.getElementById('modal-backdrop').classList.add('active');
-            }
+            showProductDetail(box.name, boxDef.desc, boxDef.imageName);
         });
 
         listContainer.appendChild(boxEl);
