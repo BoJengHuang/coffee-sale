@@ -317,6 +317,15 @@ body {
     display: flex;
     gap: 15px;
     margin-bottom: 30px;
+    align-items: stretch;
+}
+
+.add-gift-box-controls .btn {
+    white-space: nowrap;
+    padding: 0 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .add-gift-box-controls .form-select {
