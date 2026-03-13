@@ -498,6 +498,13 @@ body {
     text-align: left;
 }
 
+.hover-card.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
 /* 如果在底部，讓卡片向上彈跳避開遮擋 */
 .category-grid>.product-item:nth-last-child(-n+2) .hover-card {
     top: auto;
@@ -784,5 +791,30 @@ body {
         border-bottom: none;
         border-right: none;
         border-left: none;
+    }
+
+    /* Mobile Hover Card Adjustments */
+    .hover-card {
+        position: fixed;
+        top: 50% !important;
+        left: 50% !important;
+        bottom: auto !important;
+        transform: translate(-50%, -50%) scale(0.9) !important;
+        width: 90vw;
+        max-width: 320px;
+        max-height: 80vh;
+        overflow-y: auto;
+        margin: 0;
+        box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.4);
+        /* Backdrop effect */
+    }
+
+    .hover-card.active {
+        transform: translate(-50%, -50%) scale(1) !important;
+    }
+
+    .hover-card::before {
+        display: none;
+        /* Hide arrow on mobile modal */
     }
 }

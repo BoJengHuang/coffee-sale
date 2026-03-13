@@ -96,6 +96,19 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCart(); // also saves cart
 });
 
+// Global tap-to-close handler for bio cards
+document.addEventListener('pointerdown', (e) => {
+    const isInfoIcon = e.target.closest('.info-icon');
+    const isHoverCard = e.target.closest('.hover-card');
+
+    // If we click anywhere that isn't the icon or the card, close all cards
+    if (!isInfoIcon && !isHoverCard) {
+        document.querySelectorAll('.hover-card.active').forEach(card => {
+            card.classList.remove('active');
+        });
+    }
+});
+
 function saveCart() {
     localStorage.setItem('shoppingCartSingleItems', JSON.stringify(singleItemsCart));
     localStorage.setItem('shoppingCartGiftBoxes', JSON.stringify(giftBoxesCart));
@@ -165,6 +178,17 @@ function initSingleProducts() {
                     <button class="qty-btn" onclick="updateSingleItemQty('${itemKey}', 1)">+</button>
                 </div>
             `;
+            card.querySelector('.info-icon').addEventListener('click', (e) => {
+                e.stopPropagation();
+                const cardInner = card.querySelector('.hover-card');
+                const wasActive = cardInner.classList.contains('active');
+
+                // Close others first
+                document.querySelectorAll('.hover-card.active').forEach(c => c.classList.remove('active'));
+
+                if (!wasActive) cardInner.classList.add('active');
+            });
+
             categoryGrid.appendChild(card);
         });
         container.appendChild(categoryGrid);
@@ -314,6 +338,17 @@ function renderGiftBoxes() {
                 ${selectionsHTML}
             </div>
         `;
+        boxEl.querySelector('.info-icon').addEventListener('click', (e) => {
+            e.stopPropagation();
+            const cardInner = boxEl.querySelector('.hover-card');
+            const wasActive = cardInner.classList.contains('active');
+
+            // Close others first
+            document.querySelectorAll('.hover-card.active').forEach(c => c.classList.remove('active'));
+
+            if (!wasActive) cardInner.classList.add('active');
+        });
+
         listContainer.appendChild(boxEl);
     });
 }
