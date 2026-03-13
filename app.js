@@ -1,6 +1,7 @@
 // Google Form 設定
 const GOOGLE_FORM_BASE_URL = "https://docs.google.com/forms/d/e/1FAIpQLScjJODuzwSRnEz2pYDB-RmnGjvpS3rRmlNY8cLVlQNhEv9bMw/viewform";
-const FORM_ENTRY_ID = "entry.1825989806"; // 這是您要在 Google 表單網址中尋找的「訂單明細」對應 ID，例如 entry.123456789
+const FORM_ENTRY_ID = "entry.1825989806"; // 這是您要在 Google 表單網址中尋找的「訂單明細」對應 ID
+const FORM_ENTRY_ID_2 = "entry.687318534"; // 新增的重複填入欄位 ID
 
 const PRODUCTS = {
     "coffeeBeans": {
@@ -557,7 +558,7 @@ function generateOrderSummary() {
 
     // Open Google Form
     const encodedText = encodeURIComponent(textToCopy);
-    const prefilledUrl = `${GOOGLE_FORM_BASE_URL}?${FORM_ENTRY_ID}=${encodedText}`;
+    const prefilledUrl = `${GOOGLE_FORM_BASE_URL}?${FORM_ENTRY_ID}=${encodedText}&${FORM_ENTRY_ID_2}=${encodedText}`;
     window.open(prefilledUrl, '_blank');
 }
 
