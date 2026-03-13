@@ -97,17 +97,29 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Global tap-to-close handler for bio cards
+// Global tap-to-close and scroll-to-close handler for bio cards
+function closeAllDetailCards() {
+    document.querySelectorAll('.hover-card.active').forEach(card => {
+        card.classList.remove('active');
+    });
+}
+
 document.addEventListener('pointerdown', (e) => {
     const isInfoIcon = e.target.closest('.info-icon');
     const isHoverCard = e.target.closest('.hover-card');
 
     // If we click anywhere that isn't the icon or the card, close all cards
     if (!isInfoIcon && !isHoverCard) {
-        document.querySelectorAll('.hover-card.active').forEach(card => {
-            card.classList.remove('active');
-        });
+        closeAllDetailCards();
     }
 });
+
+// Close cards when the user scrolls (common UX for mobile full-screen-ish modals)
+window.addEventListener('scroll', () => {
+    if (document.querySelector('.hover-card.active')) {
+        closeAllDetailCards();
+    }
+}, { passive: true });
 
 function saveCart() {
     localStorage.setItem('shoppingCartSingleItems', JSON.stringify(singleItemsCart));
