@@ -464,11 +464,20 @@ body {
 }
 
 .info-icon {
-    font-size: 1.1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    font-size: 0.9rem;
     color: var(--primary-color);
-    opacity: 0.6;
+    background: rgba(111, 78, 55, 0.1);
+    border: 1px solid rgba(111, 78, 55, 0.2);
+    border-radius: 50%;
+    opacity: 0.8;
     transition: var(--transition);
     margin-top: -2px;
+    vertical-align: middle;
 }
 
 .product-title-with-hover:hover .info-icon {
