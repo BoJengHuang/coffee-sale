@@ -96,20 +96,21 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCart(); // also saves cart
 });
 
-// Global tap-to-close handler for bio cards
 // Global tap-to-close and scroll-to-close handler for bio cards
 function closeAllDetailCards() {
     document.querySelectorAll('.hover-card.active').forEach(card => {
         card.classList.remove('active');
     });
+    document.getElementById('modal-backdrop').classList.remove('active');
 }
 
 document.addEventListener('pointerdown', (e) => {
     const isInfoIcon = e.target.closest('.info-icon');
     const isHoverCard = e.target.closest('.hover-card');
+    const isBackdrop = e.target.id === 'modal-backdrop';
 
     // If we click anywhere that isn't the icon or the card, close all cards
-    if (!isInfoIcon && !isHoverCard) {
+    if ((!isInfoIcon && !isHoverCard) || isBackdrop) {
         closeAllDetailCards();
     }
 });
@@ -200,7 +201,12 @@ function initSingleProducts() {
                 // Close others first
                 document.querySelectorAll('.hover-card.active').forEach(c => c.classList.remove('active'));
 
-                if (!wasActive) cardInner.classList.add('active');
+                if (!wasActive) {
+                    cardInner.classList.add('active');
+                    document.getElementById('modal-backdrop').classList.add('active');
+                } else {
+                    document.getElementById('modal-backdrop').classList.remove('active');
+                }
             });
 
             categoryGrid.appendChild(card);
@@ -360,9 +366,12 @@ function renderGiftBoxes() {
             const wasActive = cardInner.classList.contains('active');
 
             // Close others first
-            document.querySelectorAll('.hover-card.active').forEach(c => c.classList.remove('active'));
+            closeAllDetailCards();
 
-            if (!wasActive) cardInner.classList.add('active');
+            if (!wasActive) {
+                cardInner.classList.add('active');
+                document.getElementById('modal-backdrop').classList.add('active');
+            }
         });
 
         listContainer.appendChild(boxEl);
