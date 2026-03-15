@@ -933,7 +933,22 @@ body {
     }
 
     .section-card {
-        padding: 25px 20px;
+        padding: 25px 15px;
+    }
+
+    .brand-header h2 {
+        font-size: 1.5rem;
+        line-height: 1.4;
+    }
+
+    .brand-mission {
+        font-size: 1.1rem;
+        padding: 0 10px;
+    }
+
+    .brand-desc-grid p {
+        font-size: 0.9rem;
+        line-height: 1.6;
     }
 
     .add-gift-box-controls {
@@ -1201,5 +1216,15 @@ body {
     .hover-card::before {
         display: none;
         /* Hide arrow on mobile modal */
+    }
+}
+/* Mobile wrapping helpers */
+@media (max-width: 600px) {
+    .mobile-br::after {
+        content: '\A';
+        white-space: pre;
+    }
+    .mobile-nowrap {
+        white-space: nowrap;
     }
 }
