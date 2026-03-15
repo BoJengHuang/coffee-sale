@@ -12,6 +12,7 @@ const ENTRY_ADDRESS = "entry.695755712";
 const ENTRY_DELIVERY_MODE = "entry.1965171835";
 const ENTRY_PICKUP_TIME = "entry.297668972";
 const ENTRY_PAYMENT_INFO = "entry.612393887";
+const ENTRY_EMAIL = "entry.783554575";
 
 // 注意：原需求中沒給 7, 8 題的實體 ID，程式碼中會嘗試對應，若用戶提供後續可修正常數。
 
@@ -559,6 +560,7 @@ function submitOrder() {
         const title = titleEl.value.trim();
         const nameCN = nameCNEl.value.trim();
         const nameEN = nameENEl ? nameENEl.value.trim() : "";
+        const email = document.getElementById('entry_email').value.trim();
         const phone = phoneEl.value.trim();
         const address = addressEl.value.trim();
         const deliveryMode = deliveryModeEl.value;
@@ -575,9 +577,15 @@ function submitOrder() {
         if (!club) missingFields.push("1. 來自哪個扶青/扶輪社？");
         if (!title) missingFields.push("2. 社內職稱");
         if (!nameCN) missingFields.push("3. 中文姓名");
+        if (!email) missingFields.push("電子郵件 (Email)");
         if (!phone) missingFields.push("5. 電話");
         if (!address) missingFields.push("6. 收貨地址");
         if (!paymentInfo) missingFields.push("付款帳號後五碼 或 付款狀態確認");
+
+        if (email && !email.includes('@')) {
+            alert("⚠️ 電子郵件格式不正確，請重新確認。");
+            return;
+        }
 
         if (missingFields.length > 0) {
             alert("⚠️ 訂單尚未完成！請填寫以下必填欄位：\n\n" + missingFields.join('\n'));
@@ -634,6 +642,7 @@ function submitOrder() {
         formData.append(ENTRY_NAME_EN, nameEN);
         formData.append(ENTRY_PHONE, phone);
         formData.append(ENTRY_ADDRESS, address);
+        formData.append(ENTRY_EMAIL, email);
         formData.append(ENTRY_DELIVERY_MODE, deliveryMode);
         formData.append(ENTRY_PICKUP_TIME, pickupTime);
         formData.append(ENTRY_PAYMENT_INFO, paymentInfo);
