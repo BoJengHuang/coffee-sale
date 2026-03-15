@@ -1,7 +1,19 @@
-// Google Form 設定
-const GOOGLE_FORM_BASE_URL = "https://docs.google.com/forms/d/e/1FAIpQLScjJODuzwSRnEz2pYDB-RmnGjvpS3rRmlNY8cLVlQNhEv9bMw/viewform";
-const FORM_ENTRY_ID = "entry.1825989806"; // 這是您要在 Google 表單網址中尋找的「訂單明細」對應 ID
-const FORM_ENTRY_ID_2 = "entry.687318534"; // 新增的重複填入欄位 ID
+console.log("ILIFA App Script Loaded");
+const FORM_ENTRY_ID = "entry.1825989806"; // 產品明細
+const FORM_ENTRY_ID_2 = "entry.687318534"; // 產品明細 (備份)
+
+// 基本資料對應 ID
+const ENTRY_CLUB = "entry.1649162359";
+const ENTRY_TITLE = "entry.556567269";
+const ENTRY_NAME_CN = "entry.195864220";
+const ENTRY_NAME_EN = "entry.1810958842";
+const ENTRY_PHONE = "entry.625650214";
+const ENTRY_ADDRESS = "entry.695755712";
+const ENTRY_DELIVERY_MODE = "entry.1965171835";
+const ENTRY_PICKUP_TIME = "entry.297668972";
+const ENTRY_PAYMENT_INFO = "entry.612393887";
+
+// 注意：原需求中沒給 7, 8 題的實體 ID，程式碼中會嘗試對應，若用戶提供後續可修正常數。
 
 const PRODUCTS = {
     "coffeeBeans": {
@@ -95,7 +107,41 @@ document.addEventListener('DOMContentLoaded', () => {
     initSingleProducts();
     setupEventListeners();
     updateCart(); // also saves cart
+
+    // Add Submit listener
+    const submitBtn = document.getElementById('submit-order-btn');
+    if (submitBtn) {
+        submitBtn.addEventListener('click', () => submitOrder());
+    }
 });
+
+// UI Helpers
+function togglePickupTime(show) {
+    const group = document.getElementById('pickup-time-group');
+    if (group) {
+        group.style.display = show ? 'block' : 'none';
+    }
+}
+
+function switchPayment(method) {
+    // Tabs
+    document.querySelectorAll('.payment-tab').forEach(tab => {
+        tab.classList.remove('active');
+        if (tab.innerText.includes(method === 'transfer' ? '轉帳' : 'LinePay')) {
+            tab.classList.add('active');
+        }
+    });
+
+    // Boxes
+    document.getElementById('payment-transfer-box').classList.remove('active');
+    document.getElementById('payment-linepay-box').classList.remove('active');
+
+    if (method === 'transfer') {
+        document.getElementById('payment-transfer-box').classList.add('active');
+    } else {
+        document.getElementById('payment-linepay-box').classList.add('active');
+    }
+}
 
 // Global tap-to-close and scroll-to-close handler for bio cards
 function closeAllDetailCards() {
@@ -489,78 +535,146 @@ function scrollToCheckout() {
     checkoutSection.scrollIntoView({ behavior: 'smooth' });
 }
 
-function generateOrderSummary() {
-    let subtotal = 0;
-    let orderLines = [];
+function submitOrder() {
+    console.log("Submit order button clicked");
+    try {
+        // 1. Collect Client Info safely
+        const clubEl = document.getElementById('entry_club');
+        const titleEl = document.getElementById('entry_title');
+        const nameCNEl = document.getElementById('entry_name_cn');
+        const nameENEl = document.getElementById('entry_name_en');
+        const phoneEl = document.getElementById('entry_phone');
+        const addressEl = document.getElementById('entry_address');
+        const deliveryModeEl = document.querySelector('input[name="entry_delivery_mode"]:checked');
+        const pickupTimeEl = document.getElementById('entry_pickup_time');
 
-    // Header
-    orderLines.push("=== 扶青慈善義賣 購物明細 ===");
+        // Defensive check
+        if (!clubEl || !titleEl || !nameCNEl || !phoneEl || !addressEl || !deliveryModeEl) {
+            console.error("Required DOM elements not found");
+            alert("⚠️ 系統偵測到頁面元件載入不完全，格式可能已跑掉，請重新整理網頁後再試一次。");
+            return;
+        }
 
-    // Single Items
-    const purchasedItems = singleItemsCart.filter(item => item.quantity > 0);
-    if (purchasedItems.length > 0) {
-        purchasedItems.forEach(item => {
+        const club = clubEl.value.trim();
+        const title = titleEl.value.trim();
+        const nameCN = nameCNEl.value.trim();
+        const nameEN = nameENEl ? nameENEl.value.trim() : "";
+        const phone = phoneEl.value.trim();
+        const address = addressEl.value.trim();
+        const deliveryMode = deliveryModeEl.value;
+        const pickupTime = (deliveryMode === "預購，現場取貨" && pickupTimeEl) ? pickupTimeEl.value : "宅配到府 (非活動當天取貨)";
+
+        // 2. Collect Payment Details
+        const isTransfer = document.getElementById('payment-transfer-box').classList.contains('active');
+        const paymentInfo = isTransfer
+            ? document.getElementById('transfer_last_five').value.trim()
+            : document.getElementById('linepay_status').value.trim();
+
+        // 3. Validation
+        let missingFields = [];
+        if (!club) missingFields.push("1. 來自哪個扶青/扶輪社？");
+        if (!title) missingFields.push("2. 社內職稱");
+        if (!nameCN) missingFields.push("3. 中文姓名");
+        if (!phone) missingFields.push("5. 電話");
+        if (!address) missingFields.push("6. 收貨地址");
+        if (!paymentInfo) missingFields.push("付款帳號後五碼 或 付款狀態確認");
+
+        if (missingFields.length > 0) {
+            alert("⚠️ 訂單尚未完成！請填寫以下必填欄位：\n\n" + missingFields.join('\n'));
+            return;
+        }
+
+        // 4. Collect Cart Details
+        let subtotal = 0;
+        const orderLines = [];
+        orderLines.push("=== 扶青慈善義賣 購物明細 ===");
+
+        singleItemsCart.filter(item => item.quantity > 0).forEach(item => {
             const lineTotal = item.price * item.quantity;
             subtotal += lineTotal;
-            // 格式化為: [單品] 咖啡豆名 x 數目 (小計)
             orderLines.push(`[單品] ${item.optionName} x ${item.quantity} (小計: ${lineTotal})`);
         });
-    }
 
-    // Gift Boxes
-    if (giftBoxesCart.length > 0) {
         giftBoxesCart.forEach((box) => {
             const lineTotal = box.price * box.quantity;
             subtotal += lineTotal;
             const boxDef = GIFT_BOXES[box.typeId];
-
-            // 擷取選擇的明細組成一行
             const selDetails = boxDef.selections.map((selItem, sIndex) => {
                 const optIdx = box.selections[sIndex];
                 const optName = PRODUCTS[selItem.type].options[optIdx].name;
-                return `${selItem.label}: ${optName.split(' ')[1] || optName}`; // 嘗試簡化名稱避免太長
+                return `${selItem.label}: ${optName.split(' ')[1] || optName}`;
             }).join('、');
-
-            // 格式化為: [禮盒1] (蜂蜜:A、蜂蜜:B) x 數目 (小計)
             orderLines.push(`[${box.name.split(':')[0]}] (${selDetails}) x ${box.quantity} (小計: ${lineTotal})`);
         });
-    }
 
-    if (subtotal === 0) {
-        alert("您的購物車是空的，請先選擇商品再結帳！");
-        return;
-    }
+        if (subtotal === 0) {
+            alert("您的購物車是空的，請先選擇商品再結帳！");
+            return;
+        }
 
-    // Shipping & Total
-    let shipping = subtotal < 1000 ? 65 : 0;
-    let total = subtotal + shipping;
+        const shipping = subtotal < 1000 ? 65 : 0;
+        const total = subtotal + shipping;
+        orderLines.push("\n===========================");
+        orderLines.push(`商品總額: ${subtotal} NTD`);
+        orderLines.push(`運費: ${shipping} NTD`);
+        orderLines.push(`總計應付: ${total} NTD`);
+        orderLines.push("===========================");
 
-    orderLines.push("\n===========================");
-    orderLines.push(`商品總額: ${subtotal} NTD`);
-    orderLines.push(`運費: ${shipping} NTD ${shipping === 0 ? '(滿千免運)' : '(未滿1000元)'}`);
-    orderLines.push(`總計應付: ${total} NTD`);
-    orderLines.push("===========================");
+        const orderDetailText = orderLines.join('\n');
 
-    const textToCopy = orderLines.join('\n');
+        // 5. Submit to Google Form (Background)
+        const formAction = "https://docs.google.com/forms/d/e/1FAIpQLScjJODuzwSRnEz2pYDB-RmnGjvpS3rRmlNY8cLVlQNhEv9bMw/formResponse";
 
-    // Check if Google Form logic is configured
-    if (GOOGLE_FORM_BASE_URL.includes("您的表單代碼") || FORM_ENTRY_ID.includes("您的欄位ID")) {
-        navigator.clipboard.writeText(textToCopy).then(() => {
-            alert("⚠️ 系統提示：\n您尚未在 app.js 中設定 Google 表單網址！\n\n系統已暫停自動跳轉功能，改為暫時為您「複製訂單明細」。\n（請將 app.js 第一行的 GOOGLE_FORM_BASE_URL 與 FORM_ENTRY_ID 更換為您的表單網址與欄位ID，即可啟用自動填單跳轉）");
+        const formData = new URLSearchParams();
+        formData.append(FORM_ENTRY_ID, orderDetailText);
+        formData.append(FORM_ENTRY_ID_2, orderDetailText);
+        formData.append(ENTRY_CLUB, club);
+        formData.append(ENTRY_TITLE, title);
+        formData.append(ENTRY_NAME_CN, nameCN);
+        formData.append(ENTRY_NAME_EN, nameEN);
+        formData.append(ENTRY_PHONE, phone);
+        formData.append(ENTRY_ADDRESS, address);
+        formData.append(ENTRY_DELIVERY_MODE, deliveryMode);
+        formData.append(ENTRY_PICKUP_TIME, pickupTime);
+        formData.append(ENTRY_PAYMENT_INFO, paymentInfo);
+
+        // Provide immediate feedback
+        const submitBtn = document.getElementById('submit-order-btn');
+        if (!submitBtn) return;
+        const originalBtnText = submitBtn.innerText;
+        submitBtn.innerText = "⏳ 提交中...請稍候";
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = "0.7";
+
+        console.log("Sending request to Google Forms...");
+        fetch(formAction, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: formData
+        }).then(() => {
+            console.log("Submission successful");
+            alert("✅ 訂單已成功送出！感謝您的預購。\n我們將會盡快處理您的訂單。");
+            showToast("🚀 訂單已成功送出！");
+
+            setTimeout(() => {
+                localStorage.removeItem('shoppingCartSingleItems');
+                localStorage.removeItem('shoppingCartGiftBoxes');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                setTimeout(() => location.reload(), 500);
+            }, 1000);
         }).catch(err => {
-            alert("複製失敗，請手動圈選以下文字複製：\n\n" + textToCopy);
+            console.error("Submission error:", err);
+            alert("❌ 提交時發生錯誤，請截圖您的購物明細並聯繫主辦單位。");
+            submitBtn.innerText = originalBtnText;
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = "1";
         });
-        return;
+    } catch (error) {
+        console.error("Critical error in submitOrder:", error);
+        alert("⚠️ 提交訂單時發生程式錯誤：\n" + error.message + "\n請截圖告知我們，謝謝！");
     }
-
-    // Copy to clipboard just in case
-    try { navigator.clipboard.writeText(textToCopy); } catch (e) { }
-
-    // Open Google Form
-    const encodedText = encodeURIComponent(textToCopy);
-    const prefilledUrl = `${GOOGLE_FORM_BASE_URL}?${FORM_ENTRY_ID}=${encodedText}&${FORM_ENTRY_ID_2}=${encodedText}`;
-    window.open(prefilledUrl, '_blank');
 }
+window.submitOrder = submitOrder;
 
 function showToast(message) {
     const toast = document.getElementById('toast');

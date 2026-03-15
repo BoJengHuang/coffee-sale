@@ -15,6 +15,9 @@
     <header class="header">
         <div class="header-overlay"></div>
         <div class="header-content">
+            <div class="logo-container">
+                <img src="assets/扶輪與ILIFA 圖.png" alt="扶輪與 ILIFA Logo" class="main-logo">
+            </div>
             <h1>扶青慈善義賣</h1>
             <p>用一杯香醇的咖啡與天然蜂蜜，傳遞溫暖的心意。</p>
         </div>
@@ -22,6 +25,28 @@
 
     <!-- Main Container -->
     <main class="container">
+
+        <!-- Section: Brand Introduction -->
+        <section class="section-card brand-section">
+            <div class="brand-badge-container">
+                <img src="assets/扶輪與ILIFA 圖.png" alt="ILIFA Logo" class="brand-badge">
+            </div>
+            <div class="brand-header">
+                <span class="brand-subtitle">【 2026年扶輪義賣】預購開跑囉！</span>
+                <h2>ILIFA 非洲精品咖啡與天然蜂蜜</h2>
+            </div>
+            <div class="brand-content">
+                <p>ILIFA 在非洲祖魯語中代表「遺產、傳承與贈與」。品牌創辦人生於台灣並成長於非洲，致力於透過味覺將非洲的自然與文化帶到亞洲。</p>
+                <p>我們的核心產品包括冷製非洲野生生蜂蜜，以及展現南非獨特風味的精品醇香咖啡豆和咖啡濾掛包。100%阿拉比卡非洲單一產地咖啡豆，南非匠人獨門烘製，原裝進口，體驗一杯滑順、厚實，有香氣的咖啡。</p>
+                <div class="brand-links">
+                    <a href="https://drive.google.com/drive/folders/1q6GpR-VllSF4NGya6YAi6KQxXlK3dsT8" target="_blank"
+                        class="brand-link">📁 品牌介紹</a>
+                    <a href="https://www.ilifashop.com" target="_blank" class="brand-link">🌐 官方網站</a>
+                    <a href="https://www.instagram.com/3521rotaract.tw?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+                        target="_blank" class="brand-link">📸 Instagram 粉絲專業</a>
+                </div>
+            </div>
+        </section>
 
         <!-- Section: Single Products -->
         <section class="section-card" id="single-products-section">
@@ -57,10 +82,119 @@
             </div>
         </section>
 
+        <!-- Section: Customer Information -->
+        <section class="section-card" id="customer-info-section">
+            <div class="section-header">
+                <h2>基本資料填寫</h2>
+                <p>請填寫您的基本資訊以便我們處理訂單。</p>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="entry_club">1. 您來自哪個扶青/扶輪社？<span class="required">*</span></label>
+                    <small>#若非社員請填來賓</small>
+                    <input type="text" id="entry_club" class="form-input" placeholder="請填寫所屬社名稱" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="entry_title">2. 您在社內的職稱是？<span class="required">*</span></label>
+                    <small>#如非社員請填寫來賓</small>
+                    <input type="text" id="entry_title" class="form-input" placeholder="例如：社長、秘書、來賓等" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="entry_name_cn">3. 您的中文姓名<span class="required">*</span></label>
+                    <small>#請填寫完整的中文姓名唷～</small>
+                    <input type="text" id="entry_name_cn" class="form-input" placeholder="中文全名" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="entry_name_en">4. 您的英文名字？</label>
+                    <input type="text" id="entry_name_en" class="form-input" placeholder="English Name">
+                </div>
+
+                <div class="form-group">
+                    <label for="entry_phone">5. 您的電話為？<span class="required">*</span></label>
+                    <input type="tel" id="entry_phone" class="form-input" placeholder="例：0912345678" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="entry_address">6. 您的收貨地址是？<span class="required">*</span></label>
+                    <small>#即便現場取貨仍需填寫，以防缺貨後寄送使用</small>
+                    <textarea id="entry_address" class="form-input" rows="2" placeholder="完整的收貨地址" required></textarea>
+                </div>
+            </div>
+
+            <div class="form-group mt-20">
+                <label>7. 是否預計當日(4/18)取貨?<span class="required">*</span></label>
+                <div class="radio-group">
+                    <label class="radio-label">
+                        <input type="radio" name="entry_delivery_mode" value="預購，現場取貨" checked
+                            onchange="togglePickupTime(true)">
+                        <span>預購，現場取貨</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="entry_delivery_mode" value="預購，宅配到府"
+                            onchange="togglePickupTime(false)">
+                        <span>預購，宅配到府</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group mt-20" id="pickup-time-group">
+                <label for="entry_pickup_time">8. 預計活動當天取貨時間?<span class="required">*</span></label>
+                <select id="entry_pickup_time" class="form-input">
+                    <option value="8:30–11:00">8:30–11:00</option>
+                    <option value="11:00–13:00">11:00–13:00</option>
+                    <option value="13:00–15:00">13:00–15:00</option>
+                    <option value="15:00–17:30">15:00–17:30</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- Section: Payment Information -->
+        <section class="section-card" id="payment-section">
+            <div class="section-header">
+                <h2>付款方式</h2>
+                <p>請選擇您的付款方式並完成操作。</p>
+            </div>
+
+            <div class="payment-tabs">
+                <button class="payment-tab active" onclick="switchPayment('transfer')">金融轉帳</button>
+                <button class="payment-tab" onclick="switchPayment('linepay')">LinePay 付款</button>
+            </div>
+
+            <div id="payment-transfer-box" class="payment-method-content active">
+                <div class="bank-info-card">
+                    <div class="bank-title">▍英屬維京群島商承菲國際股份有限公司台灣分公司</div>
+                    <ul class="bank-list">
+                        <li><span>匯款銀行：</span><strong>台北富邦 012 - 光明分行</strong></li>
+                        <li><span>匯款帳號：</span><strong>82120000120370</strong></li>
+                        <li><span>匯款備註：</span><strong>範例：「年會 中原 Paul」</strong></li>
+                    </ul>
+                </div>
+                <div class="form-group mt-20">
+                    <label for="transfer_last_five">匯款帳號後五碼<span class="required">*</span></label>
+                    <input type="text" id="transfer_last_five" class="form-input" placeholder="請輸入匯款帳號後五碼">
+                </div>
+            </div>
+
+            <div id="payment-linepay-box" class="payment-method-content">
+                <div class="linepay-container">
+                    <img src="assets/ILIFA 官方LinePay QR Code.png" alt="LinePay QR Code" class="linepay-qr">
+                    <p class="linepay-hint">請掃描上方 QR Code 完成付款</p>
+                </div>
+                <div class="form-group mt-20">
+                    <label for="linepay_status">確認付款狀態<span class="required">*</span></label>
+                    <input type="text" id="linepay_status" class="form-input" placeholder="請輸入「已用Line付款」" value="">
+                </div>
+            </div>
+        </section>
+
         <!-- Section: Cart Summary -->
         <section class="section-card cart-section">
             <div class="cart-summary">
-                <h2>訂單總結</h2>
+                <h2>訂單確認與送出</h2>
                 <div class="cart-details" id="cart-details">
                     <!-- Detailed items will be injected here if needed, or just totals -->
                 </div>
@@ -71,7 +205,7 @@
                 </div>
 
                 <div class="price-row shipping-row" id="shipping-row">
-                    <span>運費 (未滿1000元):</span>
+                    <span>運費:</span>
                     <span id="shipping-fee">65 NTD</span>
                 </div>
 
@@ -81,8 +215,9 @@
                 </div>
 
                 <div class="checkout-actions">
-                    <button id="generate-order-btn" class="btn btn-accent btn-large">📥 完成選購 (帶入明細回 Google 表單)</button>
-                    <p class="help-text">點擊後會為您帶入明細，並跳轉回 Google 表單繼續填寫</p>
+                    <button id="submit-order-btn" class="btn btn-accent btn-large" onclick="submitOrder()">🚀
+                        送出訂單</button>
+                    <p class="help-text">點擊後將會同步建立 Google 表單訂單資料</p>
                 </div>
             </div>
         </section>
