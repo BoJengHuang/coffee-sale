@@ -14,6 +14,8 @@ const ENTRY_PICKUP_TIME = "entry.297668972";
 const ENTRY_PAYMENT_INFO = "entry.612393887";
 const ENTRY_EMAIL = "entry.783554575";
 
+let isSubmitting = false;
+
 // 注意：原需求中沒給 7, 8 題的實體 ID，程式碼中會嘗試對應，若用戶提供後續可修正常數。
 
 const PRODUCTS = {
@@ -544,7 +546,9 @@ function scrollToCheckout() {
 }
 
 function submitOrder() {
+    if (isSubmitting) return;
     console.log("Submit order button clicked");
+    isSubmitting = true;
     try {
         // 1. Collect Client Info safely
         const clubEl = document.getElementById('entry_club');
@@ -560,6 +564,7 @@ function submitOrder() {
         if (!clubEl || !titleEl || !nameCNEl || !phoneEl || !addressEl || !deliveryModeEl) {
             console.error("Required DOM elements not found");
             alert("⚠️ 系統偵測到頁面元件載入不完全，格式可能已跑掉，請重新整理網頁後再試一次。");
+            isSubmitting = false;
             return;
         }
 
@@ -624,6 +629,7 @@ function submitOrder() {
 
         if (subtotal === 0) {
             alert("您的購物車是空的，請先選擇商品再結帳！");
+            isSubmitting = false;
             return;
         }
 
@@ -687,6 +693,7 @@ function submitOrder() {
             }, 1000);
         }).catch(err => {
             console.error("Submission error:", err);
+            isSubmitting = false;
             alert("❌ 提交時發生錯誤，請截圖您的購物明細並聯繫主辦單位。");
             submitBtn.innerText = originalBtnText;
             submitBtn.disabled = false;
@@ -694,6 +701,7 @@ function submitOrder() {
         });
     } catch (error) {
         console.error("Critical error in submitOrder:", error);
+        isSubmitting = false;
         alert("⚠️ 提交訂單時發生程式錯誤：\n" + error.message + "\n請截圖告知我們，謝謝！");
     }
 }
