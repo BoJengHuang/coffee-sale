@@ -1,6 +1,5 @@
 console.log("ILIFA App Script Loaded");
 const FORM_ENTRY_ID = "entry.1825989806"; // 產品明細
-const FORM_ENTRY_ID_2 = "entry.687318534"; // 產品明細 (備份)
 
 // 基本資料對應 ID
 const ENTRY_CLUB = "entry.1649162359";
@@ -646,7 +645,6 @@ function submitOrder() {
 
         const formData = new URLSearchParams();
         formData.append(FORM_ENTRY_ID, orderDetailText);
-        formData.append(FORM_ENTRY_ID_2, orderDetailText);
         formData.append(ENTRY_CLUB, club);
         formData.append(ENTRY_TITLE, title);
         formData.append(ENTRY_NAME_CN, nameCN);
