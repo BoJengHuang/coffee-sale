@@ -111,11 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setupEventListeners();
     updateCart(); // also saves cart
 
-    // Add Submit listener
-    const submitBtn = document.getElementById('submit-order-btn');
-    if (submitBtn) {
-        submitBtn.addEventListener('click', () => submitOrder());
-    }
 });
 
 // UI Helpers
@@ -143,6 +138,9 @@ function switchPayment(method) {
         document.getElementById('payment-transfer-box').classList.add('active');
     } else {
         document.getElementById('payment-linepay-box').classList.add('active');
+        // 自動填寫 LinePay 註記
+        const linePayInput = document.getElementById('linepay_status');
+        if (linePayInput) linePayInput.value = "LinePay";
     }
 }
 

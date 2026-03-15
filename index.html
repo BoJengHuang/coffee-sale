@@ -189,10 +189,8 @@
                     <img src="assets/ILIFA 官方LinePay QR Code.png" alt="LinePay QR Code" class="linepay-qr">
                     <p class="linepay-hint">請掃描上方 QR Code 完成付款</p>
                 </div>
-                <div class="form-group mt-20">
-                    <label for="linepay_status">確認付款狀態<span class="required">*</span></label>
-                    <input type="text" id="linepay_status" class="form-input" placeholder="請輸入「已用Line付款」" value="">
-                </div>
+                <!-- LinePay 狀態自動註記，不需客戶填寫 -->
+                <input type="hidden" id="linepay_status" value="LinePay">
             </div>
         </section>
 
