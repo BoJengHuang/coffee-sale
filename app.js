@@ -285,22 +285,29 @@ function updateSingleItemQty(itemKey, delta) {
 
 function setupEventListeners() {
     // Add Gift Box
-    document.getElementById('add-gift-box-btn').addEventListener('click', () => {
-        const select = document.getElementById('gift-box-type-select');
-        const boxTypeId = select.value;
+    const addGiftBoxBtn = document.getElementById('add-gift-box-btn');
+    if (addGiftBoxBtn) {
+        addGiftBoxBtn.addEventListener('click', () => {
+            const select = document.getElementById('gift-box-type-select');
+            if (select) {
+                const boxTypeId = select.value;
+                if (!boxTypeId) {
+                    alert('請先選擇一種禮盒類型！');
+                    return;
+                }
+                addGiftBox(boxTypeId);
+                select.value = '';
+            }
+        });
+    }
 
-        if (!boxTypeId) {
-            alert('請先選擇一種禮盒類型！');
-            return;
-        }
-
-        addGiftBox(boxTypeId);
-        // Reset select to placeholder
-        select.value = '';
-    });
-
-    // Generate Order
-    document.getElementById('generate-order-btn').addEventListener('click', generateOrderSummary);
+    // Submit Order (Alternative to onclick if needed, but let's just make it robust)
+    const submitBtn = document.getElementById('submit-order-btn');
+    if (submitBtn) {
+        // We already have onclick in HTML, but adding here as well is fine 
+        // as long as we don't double submit. Actually, let's just remove the 
+        // faulty generate-order-btn listener.
+    }
 }
 
 function addGiftBox(boxTypeId) {
@@ -646,6 +653,13 @@ function submitOrder() {
         formData.append(ENTRY_DELIVERY_MODE, deliveryMode);
         formData.append(ENTRY_PICKUP_TIME, pickupTime);
         formData.append(ENTRY_PAYMENT_INFO, paymentInfo);
+
+        // DEBUG: Log all data being sent
+        console.log("--- SUBMISSION DATA START ---");
+        for (let entry of formData.entries()) {
+            console.log(`${entry[0]}: ${entry[1]}`);
+        }
+        console.log("--- SUBMISSION DATA END ---");
 
         // Provide immediate feedback
         const submitBtn = document.getElementById('submit-order-btn');
