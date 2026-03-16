@@ -445,15 +445,19 @@ function updateCart() {
     // Shipping logic: free if over 1000, else 65
     if (subtotal === 0) {
         shippingFee = 0;
-        shippingRow.style.display = 'none';
+        if (shippingRow) shippingRow.style.display = 'none';
     } else if (subtotal < 1000) {
         shippingFee = 65;
-        shippingRow.style.display = 'flex';
-        shippingRow.innerHTML = `<span>運費 (未滿1000元):</span><span id="shipping-fee">65 NTD</span>`;
+        if (shippingRow) {
+            shippingRow.style.display = 'flex';
+            shippingRow.innerHTML = `<span>運費 (未滿1000元):</span><span id="shipping-fee">65 NTD</span>`;
+        }
     } else {
         shippingFee = 0;
-        shippingRow.style.display = 'flex';
-        shippingRow.innerHTML = `<span>運費:</span><span id="shipping-fee" style="color: #2e7d32; font-weight: 600;">已達免運門檻 (0 NTD)</span>`;
+        if (shippingRow) {
+            shippingRow.style.display = 'flex';
+            shippingRow.innerHTML = `<span>運費:</span><span id="shipping-fee" style="color: #2e7d32; font-weight: 600;">已達免運門檻 (0 NTD)</span>`;
+        }
         if (document.getElementById('float-shipping-row')) {
             document.getElementById('float-shipping-row').innerHTML = `<span>運費:</span><span id="float-shipping-fee" style="color: #2e7d32; font-weight: 600;">0 NTD</span>`;
         }
@@ -461,8 +465,63 @@ function updateCart() {
 
     const total = subtotal + shippingFee;
 
-    document.getElementById('subtotal-price').innerText = `${subtotal} NTD`;
-    document.getElementById('total-price').innerText = `${total} NTD`;
+    // Update Summary Section (New)
+    if (document.getElementById('summary-subtotal')) {
+        document.getElementById('summary-subtotal').innerText = `${subtotal} NTD`;
+        document.getElementById('summary-total').innerText = `${total} NTD`;
+
+        const summaryShippingRow = document.getElementById('summary-shipping-row');
+        if (subtotal === 0) {
+            summaryShippingRow.style.display = 'none';
+        } else if (subtotal < 1000) {
+            summaryShippingRow.style.display = 'flex';
+            summaryShippingRow.innerHTML = `<span>運費 (未滿1000元):</span><span id="summary-shipping-fee">65 NTD</span>`;
+        } else {
+            summaryShippingRow.style.display = 'flex';
+            summaryShippingRow.innerHTML = `<span>運費:</span><span id="summary-shipping-fee" style="color: #2e7d32; font-weight: 600;">已達免運門檻 (0 NTD)</span>`;
+        }
+
+        // Update Detailed Checkout Item List
+        const checkoutList = document.getElementById('checkout-item-list');
+        checkoutList.innerHTML = '';
+
+        singleItemsCart.filter(i => i.quantity > 0).forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'checkout-item';
+            div.innerHTML = `
+                <span class="item-desc">${item.optionName} x ${item.quantity}</span>
+                <span class="item-price">${item.price * item.quantity} NTD</span>
+            `;
+            checkoutList.appendChild(div);
+        });
+
+        giftBoxesCart.forEach(box => {
+            const boxDef = GIFT_BOXES[box.typeId];
+            const selDetails = boxDef.selections.map((selItem, sIndex) => {
+                const optIdx = box.selections[sIndex];
+                const optName = PRODUCTS[selItem.type].options[optIdx].name;
+                return `${optName.split(' ')[1] || optName}`;
+            }).join(' + ');
+
+            const div = document.createElement('div');
+            div.className = 'checkout-item';
+            const displayName = box.name.replace(':', '') + '組合';
+            div.innerHTML = `
+                <div class="item-desc" style="display:flex; flex-direction:column;">
+                    <span style="font-weight:600;">${displayName} x ${box.quantity}</span>
+                    <span style="font-size:0.8rem; color:var(--text-muted);">(${selDetails})</span>
+                </div>
+                <span class="item-price">${box.price * box.quantity} NTD</span>
+            `;
+            checkoutList.appendChild(div);
+        });
+    }
+
+    // Keep legacy IDs if they exist for compatibility during transition or other uses
+    if (document.getElementById('subtotal-price')) {
+        document.getElementById('subtotal-price').innerText = `${subtotal} NTD`;
+        document.getElementById('total-price').innerText = `${total} NTD`;
+    }
 
     // Save state
     saveCart();
@@ -538,8 +597,10 @@ function toggleFloatingCart() {
 
 function scrollToCheckout() {
     toggleFloatingCart(); // Close the floating cart
-    const checkoutSection = document.querySelector('.cart-section');
-    checkoutSection.scrollIntoView({ behavior: 'smooth' });
+    const checkoutSection = document.getElementById('summary-section') || document.querySelector('.submit-section');
+    if (checkoutSection) {
+        checkoutSection.scrollIntoView({ behavior: 'smooth' });
+    }
 }
 
 function submitOrder() {

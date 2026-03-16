@@ -163,6 +163,33 @@
             </div>
         </section>
 
+        <!-- Section: Order Summary (New Position) -->
+        <section class="section-card" id="summary-section">
+            <div class="section-header">
+                <h2>🛒 您的訂購明細</h2>
+                <p>請確認您的選購品項與金額是否正確。</p>
+            </div>
+
+            <div id="checkout-item-list" class="checkout-item-list">
+                <!-- Detailed items will be injected here by JS -->
+            </div>
+
+            <div class="summary-total-box">
+                <div class="price-row">
+                    <span>商品總額:</span>
+                    <span id="summary-subtotal">0 NTD</span>
+                </div>
+                <div class="price-row shipping-row" id="summary-shipping-row">
+                    <span>運費:</span>
+                    <span id="summary-shipping-fee">65 NTD</span>
+                </div>
+                <div class="price-row total-row">
+                    <span>總計金額:</span>
+                    <span id="summary-total" class="highlight-total">0 NTD</span>
+                </div>
+            </div>
+        </section>
+
         <!-- Section: Payment Information -->
         <section class="section-card" id="payment-section">
             <div class="section-header">
@@ -200,34 +227,12 @@
             </div>
         </section>
 
-        <!-- Section: Cart Summary -->
-        <section class="section-card cart-section">
-            <div class="cart-summary">
-                <h2>訂單確認與送出</h2>
-                <div class="cart-details" id="cart-details">
-                    <!-- Detailed items will be injected here if needed, or just totals -->
-                </div>
 
-                <div class="price-row">
-                    <span>商品總額:</span>
-                    <span id="subtotal-price">0 NTD</span>
-                </div>
-
-                <div class="price-row shipping-row" id="shipping-row">
-                    <span>運費:</span>
-                    <span id="shipping-fee">65 NTD</span>
-                </div>
-
-                <div class="price-row total-row">
-                    <span>總計金額:</span>
-                    <span id="total-price" class="highlight-total">0 NTD</span>
-                </div>
-
-                <div class="checkout-actions">
-                    <button id="submit-order-btn" class="btn btn-accent btn-large" onclick="submitOrder()">🚀
-                        送出訂單</button>
-                    <p class="help-text">點擊後將會同步建立 Google 表單訂單資料</p>
-                </div>
+        <!-- Section: Submit Order -->
+        <section class="section-card submit-section">
+            <div class="checkout-actions">
+                <button id="submit-order-btn" class="btn btn-accent btn-large" onclick="submitOrder()">🚀 送出訂單</button>
+                <p class="help-text">點擊後將會同步建立 Google 表單訂單資料並寄送確認信</p>
             </div>
         </section>
 
