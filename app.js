@@ -654,11 +654,13 @@ function submitOrder() {
 
         if (email && !email.includes('@')) {
             alert("⚠️ 電子郵件格式不正確，請重新確認。");
+            isSubmitting = false;
             return;
         }
 
         if (missingFields.length > 0) {
             alert("⚠️ 訂單尚未完成！請填寫以下必填欄位：\n\n" + missingFields.join('\n'));
+            isSubmitting = false;
             return;
         }
 
