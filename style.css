@@ -277,20 +277,30 @@ body {
     .section-card {
         padding: 30px 10px;
     }
+
+    .brand-section {
+        overflow: visible;
+    }
+
     .brand-mission {
-        font-size: clamp(9px, 3.2vw, 13px);
+        font-size: 12px;
         white-space: nowrap;
         letter-spacing: -0.5px;
+        margin-left: -5px;
+        margin-right: -5px;
     }
+
     .brand-desc-grid p {
         text-align: center;
         text-wrap: wrap;
         font-size: 13px;
         letter-spacing: -0.2px;
     }
+
     .desktop-br {
         display: none;
     }
+
     .mobile-br {
         display: block;
     }
@@ -1272,6 +1282,7 @@ body {
         white-space: nowrap;
     }
 }
+
 /* Checkout Item List Styles */
 .checkout-item-list {
     margin-bottom: 25px;
@@ -1284,7 +1295,7 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 10px 0;
-    border-bottom: 1px solid rgba(0,0,0,0.03);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.03);
     font-size: 0.95rem;
 }
 
