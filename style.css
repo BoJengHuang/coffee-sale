@@ -225,6 +225,17 @@ body {
     letter-spacing: 1px;
 }
 
+.charity-note {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 15px;
+    letter-spacing: 0.5px;
+    line-height: 1.5;
+    padding: 0 10px;
+}
+
 .brand-content {
     text-align: center;
     max-width: 700px;
@@ -250,20 +261,24 @@ body {
 }
 
 .brand-desc-grid p {
-    margin-bottom: 0;
+    margin: 0 auto;
     line-height: 1.8;
     color: var(--text-dark);
     font-size: 0.95rem;
     opacity: 0.9;
-    text-align: justify;
-    text-justify: inter-ideograph;
-    word-break: keep-all;
-    overflow-wrap: break-word;
+    text-align: center;
+    word-break: normal;
+    letter-spacing: 0.5px;
+    max-width: 650px;
+    text-wrap: balance;
 }
 
 @media (max-width: 600px) {
     .brand-desc-grid p {
         text-align: center;
+    }
+    .desktop-br {
+        display: none;
     }
 }
 
