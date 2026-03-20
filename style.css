@@ -274,9 +274,11 @@ body {
 }
 
 @media (max-width: 600px) {
+    .section-card {
+        padding: 30px 20px;
+    }
     .brand-desc-grid p {
-        text-align: justify;
-        text-justify: inter-ideograph;
+        text-align: center;
         text-wrap: wrap;
     }
     .desktop-br {
