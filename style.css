@@ -275,17 +275,17 @@ body {
 
 @media (max-width: 600px) {
     .section-card {
-        padding: 30px 20px;
+        padding: 30px 15px;
     }
     .brand-mission {
-        font-size: clamp(11px, 3.5vw, 15px);
+        font-size: clamp(9px, 3.2vw, 14px);
         white-space: nowrap;
         letter-spacing: 0;
     }
     .brand-desc-grid p {
         text-align: center;
         text-wrap: wrap;
-        font-size: 0.9rem;
+        font-size: 13px;
     }
     .desktop-br {
         display: none;
