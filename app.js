@@ -615,11 +615,12 @@ function submitOrder() {
         const nameENEl = document.getElementById('entry_name_en');
         const phoneEl = document.getElementById('entry_phone');
         const addressEl = document.getElementById('entry_address');
+        const emailEl = document.getElementById('entry_email');
         const deliveryModeEl = document.querySelector('input[name="entry_delivery_mode"]:checked');
         const pickupTimeEl = document.getElementById('entry_pickup_time');
 
         // Defensive check
-        if (!clubEl || !titleEl || !nameCNEl || !phoneEl || !addressEl || !deliveryModeEl) {
+        if (!clubEl || !titleEl || !nameCNEl || !phoneEl || !addressEl || !emailEl || !deliveryModeEl) {
             console.error("Required DOM elements not found");
             alert("⚠️ 系統偵測到頁面元件載入不完全，格式可能已跑掉，請重新整理網頁後再試一次。");
             isSubmitting = false;
@@ -630,7 +631,7 @@ function submitOrder() {
         const title = titleEl.value.trim();
         const nameCN = nameCNEl.value.trim();
         const nameEN = nameENEl ? nameENEl.value.trim() : "";
-        const email = document.getElementById('entry_email').value.trim();
+        const email = emailEl.value.trim();
         const phone = phoneEl.value.trim();
         const address = addressEl.value.trim();
         const deliveryMode = deliveryModeEl.value;
@@ -738,7 +739,10 @@ function submitOrder() {
         fetch(formAction, {
             method: 'POST',
             mode: 'no-cors',
-            body: formData
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: formData.toString()
         }).then(() => {
             console.log("Submission successful");
             alert("✅ 訂單已成功送出！感謝您的預購。\n我們將會盡快處理您的訂單。");
