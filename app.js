@@ -735,33 +735,54 @@ function submitOrder() {
         submitBtn.disabled = true;
         submitBtn.style.opacity = "0.7";
 
-        console.log("Sending request to Google Forms...");
-        fetch(formAction, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: formData.toString()
-        }).then(() => {
-            console.log("Submission successful");
+        console.log("Sending request to Google Forms via hidden iframe...");
+        
+        const iframeName = "hidden_iframe_" + Date.now();
+        const iframe = document.createElement("iframe");
+        iframe.name = iframeName;
+        iframe.style.display = "none";
+        document.body.appendChild(iframe);
+        
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = formAction;
+        form.target = iframeName;
+        
+        for (const [key, value] of formData.entries()) {
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = key;
+            input.value = value;
+            form.appendChild(input);
+        }
+        
+        document.body.appendChild(form);
+        form.submit();
+        
+        let isSuccessExecuted = false;
+        const triggerSuccess = () => {
+            if (isSuccessExecuted) return;
+            isSuccessExecuted = true;
+            console.log("Submission presumed successful");
             alert("✅ 訂單已成功送出！感謝您的預購。\n我們將會盡快處理您的訂單。");
             showToast("🚀 訂單已成功送出！");
-
+            
             setTimeout(() => {
+                // Ensure DOM elements still exist before attempting to remove
+                if (document.body.contains(form)) document.body.removeChild(form);
+                if (document.body.contains(iframe)) document.body.removeChild(iframe);
                 localStorage.removeItem('shoppingCartSingleItems');
                 localStorage.removeItem('shoppingCartGiftBoxes');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 setTimeout(() => location.reload(), 500);
             }, 1000);
-        }).catch(err => {
-            console.error("Submission error:", err);
-            isSubmitting = false;
-            alert("❌ 提交時發生錯誤，請截圖您的購物明細並聯繫主辦單位。");
-            submitBtn.innerText = originalBtnText;
-            submitBtn.disabled = false;
-            submitBtn.style.opacity = "1";
-        });
+        };
+
+        // When the Google Form redirect finishes loading, it will trigger the load event
+        iframe.addEventListener("load", triggerSuccess);
+        
+        // Guarantee unlocking after 4 seconds even on very slow mobile networks
+        setTimeout(triggerSuccess, 4000);
     } catch (error) {
         console.error("Critical error in submitOrder:", error);
         isSubmitting = false;
