@@ -764,8 +764,16 @@ function submitOrder() {
             if (isSuccessExecuted) return;
             isSuccessExecuted = true;
             console.log("Submission presumed successful");
-            alert("✅ 訂單已成功送出！感謝您的預購。\n我們將會盡快處理您的訂單。");
-            showToast("🚀 訂單已成功送出！");
+            
+            showToast("✅ 訂單已成功送出！感謝您的預購。");
+            
+            const btn = document.getElementById('submit-order-btn');
+            if (btn) {
+                btn.innerText = "✅ 訂單已成功送出！";
+                btn.style.backgroundColor = "#2e7d32";
+                btn.style.color = "white";
+                btn.style.opacity = "1";
+            }
             
             setTimeout(() => {
                 // Ensure DOM elements still exist before attempting to remove
@@ -775,7 +783,7 @@ function submitOrder() {
                 localStorage.removeItem('shoppingCartGiftBoxes');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 setTimeout(() => location.reload(), 500);
-            }, 1000);
+            }, 3000); // 延長到 3 秒，讓使用者能看清楚成功畫面
         };
 
         // When the Google Form redirect finishes loading, it will trigger the load event
