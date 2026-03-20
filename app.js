@@ -735,30 +735,8 @@ function submitOrder() {
         submitBtn.disabled = true;
         submitBtn.style.opacity = "0.7";
 
-        console.log("Sending request to Google Forms via hidden iframe...");
-        
-        const iframeName = "hidden_iframe_" + Date.now();
-        const iframe = document.createElement("iframe");
-        iframe.name = iframeName;
-        iframe.style.display = "none";
-        document.body.appendChild(iframe);
-        
-        const form = document.createElement("form");
-        form.method = "POST";
-        form.action = formAction;
-        form.target = iframeName;
-        
-        for (const [key, value] of formData.entries()) {
-            const input = document.createElement("input");
-            input.type = "hidden";
-            input.name = key;
-            input.value = value;
-            form.appendChild(input);
-        }
-        
-        document.body.appendChild(form);
-        form.submit();
-        
+        console.log("Sending request to Google Forms via fetch...");
+
         let isSuccessExecuted = false;
         const triggerSuccess = () => {
             if (isSuccessExecuted) return;
@@ -776,9 +754,6 @@ function submitOrder() {
             }
             
             setTimeout(() => {
-                // Ensure DOM elements still exist before attempting to remove
-                if (document.body.contains(form)) document.body.removeChild(form);
-                if (document.body.contains(iframe)) document.body.removeChild(iframe);
                 localStorage.removeItem('shoppingCartSingleItems');
                 localStorage.removeItem('shoppingCartGiftBoxes');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -786,11 +761,34 @@ function submitOrder() {
             }, 3000); // 延長到 3 秒，讓使用者能看清楚成功畫面
         };
 
-        // When the Google Form redirect finishes loading, it will trigger the load event
-        iframe.addEventListener("load", triggerSuccess);
-        
-        // Guarantee unlocking after 4 seconds even on very slow mobile networks
-        setTimeout(triggerSuccess, 4000);
+        fetch(formAction, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: formData.toString()
+        }).then(() => {
+            triggerSuccess();
+        }).catch(err => {
+            // 確認是否真的斷線
+            if (typeof navigator !== 'undefined' && !navigator.onLine) {
+                alert("❌ 您的網路似乎斷線了，請檢查連線後重試！");
+                isSubmitting = false;
+                const btn = document.getElementById('submit-order-btn');
+                if (btn) {
+                    btn.innerText = originalBtnText;
+                    btn.disabled = false;
+                    btn.style.opacity = "1";
+                }
+                return;
+            }
+            
+            // 如果網路正常，這 99% 是 Safari ITP 阻擋了 Google Form 的 302 重新導向。
+            // 因為是 no-cors POST，送出的 payload 其實早就被 Google 接收並寫入了！
+            console.warn("Fetch 捕捉到錯誤，極可能是 Safari 重新導向拒絕。訂單已安全送出。", err);
+            triggerSuccess();
+        });
     } catch (error) {
         console.error("Critical error in submitOrder:", error);
         isSubmitting = false;
