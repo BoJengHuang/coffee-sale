@@ -228,15 +228,12 @@ body {
 .charity-note {
     display: block;
     color: var(--text-muted);
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     font-weight: 500;
-    margin-top: 15px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     letter-spacing: 0.5px;
-    line-height: 1.6;
-    padding: 0 15px;
-    text-align: justify;
-    text-align-last: center;
+    line-height: 1.5;
+    padding: 0 10px;
 }
 
 .brand-content {
@@ -273,16 +270,20 @@ body {
     word-break: normal;
     letter-spacing: 0.5px;
     max-width: 650px;
+    text-wrap: balance;
 }
 
 @media (max-width: 600px) {
     .brand-desc-grid p {
         text-align: justify;
-        text-align-last: center;
-        padding: 0 15px;
+        text-justify: inter-ideograph;
+        text-wrap: wrap;
     }
     .desktop-br {
         display: none;
+    }
+    .mobile-br {
+        display: block;
     }
 }
 
