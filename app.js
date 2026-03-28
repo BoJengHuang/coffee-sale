@@ -118,6 +118,7 @@ function togglePickupTime(show) {
     if (group) {
         group.style.display = show ? 'block' : 'none';
     }
+    updateCart();
 }
 
 function switchPayment(method) {
@@ -442,11 +443,14 @@ function updateCart() {
     let shippingFee = 0;
     const shippingRow = document.getElementById('shipping-row');
 
+    const deliveryModeEl = document.querySelector('input[name="entry_delivery_mode"]:checked');
+    const isDelivery = deliveryModeEl && deliveryModeEl.value === "預購，宅配到府";
+
     // Shipping logic: free if over 1000, else 65
     if (subtotal === 0) {
         shippingFee = 0;
         if (shippingRow) shippingRow.style.display = 'none';
-    } else if (subtotal < 1000) {
+    } else if (isDelivery && subtotal < 1000) {
         shippingFee = 65;
         if (shippingRow) {
             shippingRow.style.display = 'flex';
@@ -456,7 +460,11 @@ function updateCart() {
         shippingFee = 0;
         if (shippingRow) {
             shippingRow.style.display = 'flex';
-            shippingRow.innerHTML = `<span>運費:</span><span id="shipping-fee" style="color: #2e7d32; font-weight: 600;">已達免運門檻 (0 NTD)</span>`;
+            if (isDelivery) {
+                shippingRow.innerHTML = `<span>運費:</span><span id="shipping-fee" style="color: #2e7d32; font-weight: 600;">已達免運門檻 (0 NTD)</span>`;
+            } else {
+                shippingRow.innerHTML = `<span>運費:</span><span id="shipping-fee" style="color: #2e7d32; font-weight: 600;">現場取貨 (0 NTD)</span>`;
+            }
         }
         if (document.getElementById('float-shipping-row')) {
             document.getElementById('float-shipping-row').innerHTML = `<span>運費:</span><span id="float-shipping-fee" style="color: #2e7d32; font-weight: 600;">0 NTD</span>`;
@@ -473,12 +481,16 @@ function updateCart() {
         const summaryShippingRow = document.getElementById('summary-shipping-row');
         if (subtotal === 0) {
             summaryShippingRow.style.display = 'none';
-        } else if (subtotal < 1000) {
+        } else if (isDelivery && subtotal < 1000) {
             summaryShippingRow.style.display = 'flex';
             summaryShippingRow.innerHTML = `<span>運費 (未滿1000元):</span><span id="summary-shipping-fee">65 NTD</span>`;
         } else {
             summaryShippingRow.style.display = 'flex';
-            summaryShippingRow.innerHTML = `<span>運費:</span><span id="summary-shipping-fee" style="color: #2e7d32; font-weight: 600;">已達免運門檻 (0 NTD)</span>`;
+            if (isDelivery) {
+                summaryShippingRow.innerHTML = `<span>運費:</span><span id="summary-shipping-fee" style="color: #2e7d32; font-weight: 600;">已達免運門檻 (0 NTD)</span>`;
+            } else {
+                summaryShippingRow.innerHTML = `<span>運費:</span><span id="summary-shipping-fee" style="color: #2e7d32; font-weight: 600;">現場取貨 (0 NTD)</span>`;
+            }
         }
 
         // Update Detailed Checkout Item List
@@ -530,11 +542,14 @@ function updateCart() {
     if (document.getElementById('float-subtotal')) {
         document.getElementById('float-subtotal').innerText = `${subtotal} NTD`;
 
-        if (subtotal > 0 && subtotal < 1000) {
+        if (subtotal === 0) {
+            document.getElementById('float-shipping-row').style.display = 'none';
+        } else if (isDelivery && subtotal < 1000) {
             document.getElementById('float-shipping-row').innerHTML = `<span>運費:</span><span id="float-shipping-fee">65 NTD</span>`;
             document.getElementById('float-shipping-row').style.display = 'flex';
-        } else if (subtotal === 0) {
-            document.getElementById('float-shipping-row').style.display = 'none';
+        } else {
+            document.getElementById('float-shipping-row').innerHTML = `<span>運費:</span><span id="float-shipping-fee" style="color: #2e7d32; font-weight: 600;">0 NTD</span>`;
+            document.getElementById('float-shipping-row').style.display = 'flex';
         }
 
         document.getElementById('float-total-price').innerText = `${total} NTD`;
@@ -694,7 +709,8 @@ function submitOrder() {
             return;
         }
 
-        const shipping = subtotal < 1000 ? 65 : 0;
+        const isDelivery = deliveryMode === "預購，宅配到府";
+        const shipping = (isDelivery && subtotal < 1000) ? 65 : 0;
         const total = subtotal + shipping;
         orderLines.push("\n===========================");
         orderLines.push(`商品總額: ${subtotal} NTD`);
